@@ -5,9 +5,12 @@ import { Verification } from './verification.entity';
 import { UserService } from './user.service';
 import { UserController } from './controllers/user.controller';
 import { Order } from 'src/order/entities/order.entity';
+import { UnauthorizedUser } from './unauthorized-user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Verification, Order])],
+  imports: [
+    TypeOrmModule.forFeature([User, Verification, Order, UnauthorizedUser]),
+  ],
   providers: [UserService],
   controllers: [UserController],
   exports: [UserService],

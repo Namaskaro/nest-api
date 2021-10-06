@@ -13,12 +13,6 @@ import { IsBoolean, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Order } from 'src/order/entities/order.entity';
 
-export enum UserRole {
-  Client = 'Client',
-  Manager = 'Manager',
-  Owner = 'Owner',
-}
-
 @Entity()
 export class User extends CoreEntity {
   @ApiProperty()
@@ -40,11 +34,6 @@ export class User extends CoreEntity {
   @ApiProperty()
   @Column({ nullable: true })
   avatar?: string;
-
-  @ApiProperty()
-  @Column({ type: 'enum', enum: UserRole, nullable: true })
-  @IsEnum(UserRole)
-  role: UserRole;
 
   @ApiProperty()
   @Column({ nullable: true })

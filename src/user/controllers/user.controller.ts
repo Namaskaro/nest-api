@@ -52,31 +52,24 @@ export class UserController {
 
   SERVER_URL: string = 'http://localhost:3000/';
 
-  @Post('login')
+  @Post('user/login')
   async login(@Body() loginDto: LoginDto): Promise<LoginOutputDto> {
     return await this.userService.login(loginDto);
   }
 
-  @Post('register')
+  @Post('user/register')
   async register(@Body() createAccountDto: CreateAccountDto) {
     return await this.userService.createAccount(createAccountDto);
   }
 
-  @Delete('delete/:slug')
+  @Delete('user/delete/:slug')
   async delete(@Param() params) {
     return await this.userService.delete(params.slug);
   }
 
-  @Put('update')
+  @Put('user/update')
   async update(userId: number, @Body('user') editProfileDto: EditProfileDto) {
     return await this.userService.editProfile(userId, editProfileDto);
-  }
-
-  @Get('user')
-  @UseGuards(AuthGuard())
-  testRoute(@CurrentUser() user: User) {
-    console.log('Current User: ', user);
-    return { user };
   }
 
   // @UseGuards(AuthGuard())
@@ -111,10 +104,8 @@ export class UserController {
     res.sendFile(path, { root: 'uploads' });
   }
 
-  // @Get('user')
-  // async getCurrentUser(@Req() request: Request) {
-  //   const {  email, name, password } = request.user
-
-  //   return { email, name, password }
-  // }
+  @Post('user/token')
+  async generateToken(): Promise<any> {
+    return await this.userService.createUserAccessKey();
+  }
 }

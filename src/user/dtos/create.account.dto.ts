@@ -1,7 +1,7 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { CoreOutput } from 'src/common/dtos/output.dto';
-import { UserRole } from '../user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../user.entity';
 
 export class CreateAccountDto {
   @ApiProperty()
@@ -15,10 +15,8 @@ export class CreateAccountDto {
   @ApiProperty()
   @IsString()
   password: string;
-
-  @ApiProperty()
-  @IsEnum(UserRole)
-  role: UserRole;
 }
 
-export class CreateAccountOutputDto extends CoreOutput {}
+export class CreateAccountOutputDto extends CoreOutput {
+  user?: User;
+}

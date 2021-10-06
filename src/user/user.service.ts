@@ -9,16 +9,26 @@ import {
 } from './dtos/create.account.dto';
 import { EditProfileDto, EditProfileOutputDto } from './dtos/edit.profile.dto';
 import { LoginDto, LoginOutputDto } from './dtos/login.dto';
+import {
+  UserAccessKeyInput,
+  UserAccessKeyOutput,
+} from './dtos/user-acces-key.dto';
 import { UserProfileOutputDto } from './dtos/user.profile.dto';
 import { VerifyEmailOutputDto } from './dtos/verify-email.dto';
 import { User } from './user.entity';
 import { Verification } from './verification.entity';
+import * as jwt from 'jsonwebtoken';
+import { UnauthorizedUser } from './unauthorized-user.entity';
+import { CreateUnauthorizedUserOutput } from './dtos/create-unauthorized-user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly users: Repository<User>,
+
+    @InjectRepository(UnauthorizedUser)
+    private readonly unauthorizedUsers: Repository<UnauthorizedUser>,
 
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
@@ -28,12 +38,32 @@ export class UserService {
     private readonly mailService: MailService,
   ) {}
 
+  async createUserAccessKey(): Promise<CreateUnauthorizedUserOutput> {
+    try {
+      const privateKey = 'ma5sj39mg0vveqp2';
+      const token = jwt.sign({ algorithm: 'RS256' }, privateKey, {
+        expiresIn: '2h',
+      });
+      const unauthorizedUser = await this.unauthorizedUsers.create({
+        userAccessKey: token,
+      });
+      await this.unauthorizedUsers.save(unauthorizedUser);
+      // const token = await this.jwtService.create();
+
+      return {
+        ok: true,
+        userAccessKey: token,
+      };
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   //Create new user account
   async createAccount({
     email,
     password,
     name,
-    role,
   }: CreateAccountDto): Promise<CreateAccountOutputDto> {
     try {
       const exists = await this.users.findOne({ email });
@@ -44,7 +74,7 @@ export class UserService {
         };
       }
       const user = await this.users.save(
-        this.users.create({ email, password, name, role }),
+        this.users.create({ email, password, name }),
       );
       const verification = await this.verifications.save(
         this.verifications.create({
@@ -52,7 +82,7 @@ export class UserService {
         }),
       );
       this.mailService.sendVerificationEmail(user.email, verification.code);
-      return { ok: true };
+      return { ok: true, user };
     } catch (e) {
       return { ok: false, error: "Couldn't create account" };
     }
@@ -156,4 +186,7 @@ export class UserService {
       return { ok: false, error: 'Could not verify email.' };
     }
   }
+}
+function userAccessKey(userAccessKey: any) {
+  throw new Error('Function not implemented.');
 }

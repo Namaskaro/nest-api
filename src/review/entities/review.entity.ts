@@ -1,23 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/user/user.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity } from 'typeorm';
 
 @Entity()
-export class Mesasage extends CoreEntity {
+export class Review extends CoreEntity {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
-  id: number;
+  @Column()
+  userId: User;
 
   @ApiProperty()
   @Column()
-  author: User;
+  username: string;
 
   @ApiProperty()
   @Column()
-  partner: User;
+  body: string;
 
   @ApiProperty()
-  @Column()
-  text: string;
+  @Column({ type: 'timestamp', nullable: true })
+  @CreateDateColumn()
+  postedDate: Date;
 }

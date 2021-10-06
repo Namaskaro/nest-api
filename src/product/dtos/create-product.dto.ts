@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { CoreOutput } from 'src/common/dtos/output.dto';
-import { PrimaryGeneratedColumn } from 'typeorm';
+import { ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export class CreateProductInputDto {
   @ApiProperty()
@@ -26,7 +26,7 @@ export class CreateProductInputDto {
 
   @ApiProperty()
   @IsString()
-  images: string[];
+  images?: string[];
 
   @ApiProperty()
   @IsString()

@@ -1,4 +1,3 @@
-import { Color } from '../colors/entities/color.entity';
 import {
   Entity,
   Column,
@@ -6,18 +5,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { IsEnum } from 'class-validator';
-import { Category } from 'src/categories/entities/category.entity';
-
-export enum Sizes {
-  XXS = 'XXS',
-  XS = 'XS',
-  S = 'S',
-  M = 'M',
-  L = 'L',
-  XL = 'XL',
-  XXL = 'XXL',
-}
+import { Category } from './category.entity';
 
 @Entity()
 export class Product {
@@ -27,8 +15,11 @@ export class Product {
   @Column()
   title: string;
 
-  @Column()
-  descriprion: string;
+  @Column({ nullable: true })
+  composition: string;
+
+  @Column({ nullable: true })
+  description: string;
 
   @Column()
   price: number;
@@ -36,7 +27,7 @@ export class Product {
   @Column()
   coverImg: string;
 
-  @Column('text', { array: true })
+  @Column('text', { array: true, nullable: true })
   photos: string[];
 
   @ManyToOne(() => Category, (category) => category.products, {
@@ -44,11 +35,4 @@ export class Product {
     onDelete: 'SET NULL',
   })
   category: Category;
-
-  @Column({ type: 'enum', enum: Sizes, nullable: true })
-  @IsEnum(Sizes)
-  sizes: Sizes;
-
-  @OneToMany((type) => Color, (color) => color.product, { nullable: true })
-  color: Color;
 }
